@@ -1,0 +1,47 @@
+{
+	"creative": {
+		"path": "./creative"
+	},
+	"leavebehind" : {
+		"path": "../assetsLocal/Reflow/assets/",
+		"desktop": {
+			"name": "leavebehind",
+			"html": "leavebehind.html",
+			"css": "leavebehind.css",
+			"className": {
+				
+			},
+			"data": {
+				
+			},
+			"idName": {
+				
+			}
+		},
+		"mobile": {
+			"name": "mobile-leavebehind",
+			"css": "mobile-leavebehind.css"
+		}
+	},
+	"interactive" : {
+		"path": "../assetsLocal/Reflow/assets/",
+		"desktop": {
+			"name": "interactive",
+			"html": "interactive.html",
+			"css": "interactive.css",
+			"className": {
+				
+			},
+			"data": {
+				
+			},
+			"idName": {
+				
+			}
+		},
+		"mobile": {
+			"name": "mobile-interactive",
+			"css": "mobile-interactive.css"
+		}
+	}
+}

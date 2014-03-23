@@ -1,0 +1,35 @@
+/* play button container */
+.utvp_play_toggle{
+	opacity: 1;
+}
+
+/* total time */
+.utvp_time_duration{
+	color: black;
+}
+
+/* process bar */
+.utvp_progress_bar{
+	display: none;
+}
+
+/* video height */
+.utvp_player_frame, .utvp_video{
+	height: 100%;
+}
+
+/* play button */
+.icon-play-toggle:before {
+    content:'';
+    position: absolute;
+    background: url(../video/skin/playBtn.png) center center no-repeat;
+    top: 50%;
+    left: 50%;
+    width: 129px;
+    height:103px;
+    margin: -53px 0 0 -62px;
+    opacity: 1;
+}
+.utvp_play_toggle_wrapper:hover .icon-play-toggle:before{
+	background-image: url(../video/skin/playBtnOver.png);
+}

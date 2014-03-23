@@ -1,0 +1,116 @@
+@import "less/common"; 
+
+
+/*============= Main CSS =============*/
+.preload img{
+    width: 100%;
+    height: auto;
+}
+.lt-ie9{
+    .ie8_hidden{
+        visibility: hidden;
+    }
+}
+.wrapper-1280{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+body, .leavebehind, .interactive {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.leavebehind, .interactive{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.leavebehind{
+    height: 90px;
+    visibility: hidden;
+    background-color: blue;
+}
+
+.interactive{
+    height: 100%;
+    background-color: pink;
+}
+
+
+
+.nexus{
+    .interactive{
+        max-height: 509px;
+    }
+}
+.duos{
+    .interactive{
+        max-height: 509px;
+    }
+}
+.s3{
+    .interactive{
+        max-height: 616px;
+    }
+}
+
+
+
+// have menu bar:  iphone4/4S (IOS7)
+.mobile.hgt370{
+    .interactive{
+        background-color: red;
+    }
+}
+
+// have menu bar:  iphone4/4S (IOS5/6)
+// not have menu bar:  iphone4/4S (IOS5/6)  &  iphone4/4S (IOS7)
+.mobile.hgt410{
+    .interactive{
+        background-color: orange;
+    }
+}
+
+// have menu bar:  Samsung 005 (Android 2.3)
+.mobile.hgt450{
+    .interactive{
+        background-color: yellow;
+    }
+}
+
+// have menu bar:  iphone5/iTouch5 (IOS7)  &  Duos (Android 4.0.4)
+// not have menu bar:  iphone5/iTouch5 (IOS7)  &  Samsung 005 (Android 2.3)  &  Duos (Android 4.0.4)
+.mobile.hgt460{
+    .interactive{
+        background-color: green;
+    }
+}
+
+// have menu bar:  S3 (Android 4.1.2)  &  S4 (Android 4.2.2)
+// not have menu bar:  S4 (Android 4.2.2)
+.mobile.hgt560{
+    .interactive{
+        background-color: blue;
+    }
+}
+
+// have menu bar:  Note3 (Android 4.3)
+// not have menu bar:  S3 (Android 4.1.2)  &  Note3 (Android 4.3)
+.mobile.hgt590{
+    .interactive{
+        background-color: purple;
+    }
+}
