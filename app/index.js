@@ -11,7 +11,7 @@ var CoralGenerator = module.exports = function CoralGenerator(args, options, con
     this.installDependencies({ skipInstall: options['skip-install'] });
   });
 
-  this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
+  this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../toClient/package.json')));
 };
 
 util.inherits(CoralGenerator, yeoman.generators.NamedBase);
