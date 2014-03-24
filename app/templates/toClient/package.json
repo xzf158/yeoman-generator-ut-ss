@@ -9,8 +9,10 @@
     "url": "http://github.com/xzf158"
   },
   "devDependencies": {
-    "jquery": "latest",
-    "jsdom": "latest",
-    "colors": "latest"
+    "cheerio": "latest",
+    "colors": "latest",
+    "fs-extra": "latest",
+    "zip-dir": "latest",
+    "node-watch": "latest"
   }
 }

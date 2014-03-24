@@ -1,10 +1,11 @@
 'use strict';
-var fs = require('fs'),
+var fs = require('fs-extra'),
+    zipdir = require('zip-dir'),
     colors = require('colors'),
     cheerio = require('cheerio'),
+    watch = require('node-watch'),
     configJosn,
-    paras = process.argv[2];
-
+    para = process.argv[2];
 if (fs.existsSync("config.json")) {
     configJosn = JSON.parse(fs.readFileSync("config.json").toString("utf8"));
 } else {
@@ -17,6 +18,32 @@ var targetHtmlPath = configJosn.creative.path + "/index.html",
     leavebehindHtml,
     interactiveHtml;
 
+switch(para){
+    case "zip":
+        zip();
+        break;
+    case "watch":
+        console.log("=====begin watch=====".green);
+        watch([configJosn.interactive.path, configJosn.leavebehind.path], { recursive: false, followSymLinks: true }, function(filename) {
+            clearTimeout(timeid);
+            timeid = setTimeout(function(){
+                build();
+            }, 1000);
+        });
+        break;
+    case undefined:
+        build();
+        break;
+    default:
+        if(fs.existsSync("./creative/" + para)){
+            fs.writeFileSync("./preload.txt", getAllFiles("./creative/" + para));
+            console.log("Preload image save to preload.txt".green);
+        }else{
+            console.log(("./creative/" + para + " not exist").red);
+        }
+        break;
+}
+
 function build() {
     copyImage(configJosn.leavebehind.path + "img/");
     if (configJosn.leavebehind.path != configJosn.interactive.path) {
@@ -25,7 +52,17 @@ function build() {
     leavebehind();
     interactive();
     mergeHtml();
+    console.log("======build complete======".green);
 }
+
+function zip(){
+     copyFile(function (){
+        var tmpCss = configJosn.creative.path.replace("creative", "creative-tmp") + "/style.css";
+        var css = fs.readFileSync(tmpCss).toString('utf8');
+        fs.writeFileSync(tmpCss, formatCss(css));
+        zipFolder(configJosn.creative.path.replace("creative", "creative-tmp"),configJosn.creative.path.replace("creative", "creative.zip"),true);
+     });
+};
 
 function leavebehind() {
     if (fs.existsSync(configJosn.leavebehind.path + configJosn.leavebehind.desktop.html)) {
@@ -40,7 +77,7 @@ function leavebehind() {
         console.log((configJosn.leavebehind.path + configJosn.leavebehind.desktop.css + " not exist").red);
     }
     if (fs.existsSync(configJosn.leavebehind.path + configJosn.leavebehind.mobile.css)) {
-        replaceCssFile(configJosn.leavebehind.path + configJosn.leavebehind.mobile.css, targetLessPath + configJosn.leavebehind.mobile.name + ".less", ".mobile ." + configJosn.leavebehind.desktop.name);
+        replaceCssFile(configJosn.leavebehind.path + configJosn.leavebehind.mobile.css, targetLessPath + configJosn.leavebehind.mobile.name + ".less", ".fpf ." + configJosn.leavebehind.desktop.name);
     } else {
         console.log((configJosn.leavebehind.path + configJosn.leavebehind.mobile.css + " not exist").red);
     }
@@ -59,7 +96,7 @@ function interactive() {
         console.log((configJosn.interactive.path + configJosn.interactive.desktop.css + " not exist").red);
     }
     if (fs.existsSync(configJosn.interactive.path + configJosn.interactive.mobile.css)) {
-        replaceCssFile(configJosn.interactive.path + configJosn.interactive.mobile.css, targetLessPath + configJosn.interactive.mobile.name + ".less", ".mobile ." + configJosn.interactive.desktop.name);
+        replaceCssFile(configJosn.interactive.path + configJosn.interactive.mobile.css, targetLessPath + configJosn.interactive.mobile.name + ".less", ".fpf ." + configJosn.interactive.desktop.name);
     } else {
         console.log((configJosn.interactive.path + configJosn.interactive.mobile.css + " not exist").red);
     }
@@ -120,28 +157,28 @@ function getHtml(filePath, config) {
     newHtml = newHtml.replace(/id=\"/g, "class=\"").replace(/class=\"clearfix\"/g, "");
     newHtml = newHtml.split("\n").join("\n    ");
     var $$ = cheerio.load(newHtml);
-    if(config.ignoreClass){
-        for(var i in config.ignoreClass){
+    if (config.ignoreClass) {
+        for (var i in config.ignoreClass) {
             $$("." + i).removeClass(config.ignoreClass[i]);
-            if(config.ignoreClass[i].indexOf("preload") != -1){
+            if (config.ignoreClass[i].indexOf("preload") != -1) {
                 $$("." + i).removeAttr("data-source");
             }
         }
     }
     if (config.className) {
-        for(var i in config.className){
+        for (var i in config.className) {
             $$("." + i).addClass(config.className[i]);
         }
     }
     if (config.data) {
-        for(var className in config.data){
+        for (var className in config.data) {
             for (var i in config.data[className]) {
                 $$("." + className).attr("data-" + i, config.data[className][i]);
             }
         }
     }
     if (config.idName) {
-        for(var i in config.idName){
+        for (var i in config.idName) {
             $$("." + i).attr("id", config.idName[i]);
         }
     }
@@ -150,8 +187,8 @@ function getHtml(filePath, config) {
 
 function replaceCssFile(filePah, targetPath, prefix) {
     var css = fs.readFileSync(filePah).toString('utf8');
-    var colorPattern1 = /#[0-9a-fA-F]{6}/g;
-    var colorPattern2 = /#[0-9a-fA-F]{3}/g;
+    var colorPattern1 = /#[0-9a-fA-F]{6};/g;
+    var colorPattern2 = /#[0-9a-fA-F]{3};/g;
     css = css.replace(/.primaryContainer \{[^\}]+\}\n/g, "");
     css = css.replace(/\/\*[^\*\/]+\*\/\n/g, "");
     var matchResult = css.match(colorPattern1);
@@ -176,7 +213,7 @@ function replaceCssFile(filePah, targetPath, prefix) {
     fs.writeFileSync(targetPath, css);
     console.log("Create: " + targetPath.green);
 }
-
+var timeid;
 function getAllFiles(rootPath) {
     var imgs = [];
     var files = fs.readdirSync(rootPath);
@@ -188,10 +225,47 @@ function getAllFiles(rootPath) {
     return imgs.join("\r\n");
 }
 
-if(paras){
-    fs.writeFileSync("./preload.txt", getAllFiles("./creative/" + paras));
-    console.log("Preload image save to preload.txt".green);
-}else{
-    build();
+function copyFile(cb) {
+    fs.copy(configJosn.creative.path, configJosn.creative.path.replace("creative","creative-tmp"), function(e) {
+        if (e.indexOf(".svn") != -1) return false;
+        if (e.indexOf("/creative") != -1 && e.indexOf("/creative/") == -1) return true;
+        if (e.indexOf("/creative/index.html") != -1) return true;
+        if (e.indexOf("/creative/app.js") != -1) return true;
+        if (e.indexOf("/creative/style.css") != -1) return true;
+        if (e.indexOf("/creative/swf") != -1) return true;
+        if (e.indexOf("/creative/video") != -1) return true;
+        if (e.indexOf("/creative/fonts") != -1) return true;
+        if (e.indexOf("/creative/css") != -1) return true;
+        if (e.indexOf("/creative/js") != -1) return true;
+        if (e.indexOf("/creative/img") != -1) return true;
+        return false;
+    }, function(err) {
+        if (err) {
+            throw err;
+        }
+        if(cb){
+            cb();
+        }        
+    });
+};
+
+
+function formatCss(s) {
+    s = s.replace(/\s*([\{\}\:\;\,])\s*/g, "$1");
+    s = s.replace(/;\s*;/g, ";"); //清除连续分号
+    s = s.replace(/\,[\s\.\#\d]*{/g, "{");
+    s = s.replace(/([^\s])\{([^\s])/g, "$1 {\n\t$2");
+    s = s.replace(/([^\s])\}([^\n]*)/g, "$1\n}\n$2");
+    s = s.replace(/([^\s]);([^\s\}])/g, "$1;\n\t$2");
+    return s;
 }
 
+function zipFolder(path, target, isDelete){
+     zipdir(path, target, function(err, buffer) {
+        console.log("zip complete".green);
+        if(isDelete){
+            fs.remove(path, function(err) {
+            });
+        }
+    });
+};
