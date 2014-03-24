@@ -1,6 +1,6 @@
 {
   "name": "generator-ut-ss",
-  "version": "0.1",
+  "version": "0.1.0",
   "description": "ut ss generator",
   "keywords": [
     "yeoman-generator","html5"

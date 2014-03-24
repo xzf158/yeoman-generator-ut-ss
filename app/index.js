@@ -8,10 +8,8 @@ var CoralGenerator = module.exports = function CoralGenerator(args, options, con
   yeoman.generators.Base.apply(this, arguments);
 
   this.on('end', function () {
-    this.installDependencies({ skipInstall: options['skip-install'] });
+    // this.installDependencies({ skipInstall: options['skip-install'] });
   });
-
-  this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../toClient/package.json')));
 };
 
 util.inherits(CoralGenerator, yeoman.generators.NamedBase);
@@ -50,23 +48,9 @@ CoralGenerator.prototype.askFor = function askFor() {
 };
 
 CoralGenerator.prototype.app = function app() {
-  // this.template('_README.md', 'README.md');
-
-  // this.template('_package.json', 'package.json');
-  // this.template('_bower.json', 'bower.json');
-  // this.template('_config.json', 'config.json');
-
-  // this.template('_Gruntfile.js', 'Gruntfile.js');
-
-  // this.template('bowerrc', '.bowerrc');
-  // this.template('editorconfig', '.editorconfig');
-  // this.template('gitignore', '.gitignore');
-  // this.template('jshintrc', '.jshintrc');
-
-  this.directory('Assets/', 'Assets/');
-};
-
-CoralGenerator.prototype.projectfiles = function projectfiles() {
-  this.copy('editorconfig', '.editorconfig');
-  this.copy('jshintrc', '.jshintrc');
+  this.directory('toClient/', 'toClient/');
+  this.directory('assetsLocal/', 'assetsLocal/');
+  this.mkdir('Assets');
+  this.mkdir('assetsLocal/image');
+  this.mkdir('assetsLocal/video');
 };

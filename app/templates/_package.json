@@ -1,0 +1,13 @@
+{
+  "name": "ut-ss-template",
+  "version": "0.1.0",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "author": {
+    "name": "terry xu",
+    "url": "http://github.com/xzf158"
+  },
+  "devDependencies": {
+  }
+}
