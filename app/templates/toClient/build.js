@@ -5,7 +5,8 @@ var fs = require('fs-extra'),
     cheerio = require('cheerio'),
     watch = require('node-watch'),
     configJosn,
-    para = process.argv[2];
+    para = process.argv[2],
+    fileNameReg = /^[A-Za-z0-9\-\_]+$/;
 if (fs.existsSync("config.json")) {
     configJosn = JSON.parse(fs.readFileSync("config.json").toString("utf8"));
 } else {
@@ -56,6 +57,9 @@ function build() {
 }
 
 function zip(){
+    if(!validationAllFiles(configJosn.creative.path)){
+        return;
+    }
      copyFile(function (){
         var tmpCss = configJosn.creative.path.replace("creative", "creative-tmp") + "/style.css";
         var css = fs.readFileSync(tmpCss).toString('utf8');
@@ -228,6 +232,8 @@ function getAllFiles(rootPath) {
 function copyFile(cb) {
     fs.copy(configJosn.creative.path, configJosn.creative.path.replace("creative","creative-tmp"), function(e) {
         if (e.indexOf(".svn") != -1) return false;
+        if (e.indexOf(".DS_Store") != -1) return false;
+        if (e.indexOf(".git") != -1) return false;
         if (e.indexOf("/creative") != -1 && e.indexOf("/creative/") == -1) return true;
         if (e.indexOf("/creative/index.html") != -1) return true;
         if (e.indexOf("/creative/app.js") != -1) return true;
@@ -249,6 +255,27 @@ function copyFile(cb) {
     });
 };
 
+function validationAllFiles(root) {
+    var files = fs.readdirSync(root),
+        isPass = true;
+    files.forEach(function(file) {
+        var pathname = root + '/' + file, stat = fs.lstatSync(pathname);
+        if(pathname.indexOf(".svn") != -1 || pathname.indexOf("/less") != -1 || pathname.indexOf("/js") != -1 || pathname.indexOf("/fonts") != -1 || pathname.indexOf("ut_config_ucss.js") != -1){
+            return;
+        }
+        if (!stat.isDirectory()) {
+            if(file.lastIndexOf(".") == 0){return;}
+            var fileName = file.substr(0, file.lastIndexOf("."));
+            if(fileNameReg.test(fileName) == false){
+                console.log((pathname + " 文件名不合法！").red);
+                isPass = false;
+            }
+        } else {
+            isPass = isPass && validationAllFiles(pathname);
+        }
+    });
+    return isPass;
+}
 
 function formatCss(s) {
     s = s.replace(/\s*([\{\}\:\;\,])\s*/g, "$1");
