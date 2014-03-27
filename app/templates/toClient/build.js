@@ -230,20 +230,21 @@ function getAllFiles(rootPath) {
 }
 
 function copyFile(cb) {
-    fs.copy(configJosn.creative.path, configJosn.creative.path.replace("creative","creative-tmp"), function(e) {
-        if (e.indexOf(".svn") != -1) return false;
-        if (e.indexOf(".DS_Store") != -1) return false;
-        if (e.indexOf(".git") != -1) return false;
-        if (e.indexOf("/creative") != -1 && e.indexOf("/creative/") == -1) return true;
-        if (e.indexOf("/creative/index.html") != -1) return true;
-        if (e.indexOf("/creative/app.js") != -1) return true;
-        if (e.indexOf("/creative/style.css") != -1) return true;
-        if (e.indexOf("/creative/swf") != -1) return true;
-        if (e.indexOf("/creative/video") != -1) return true;
-        if (e.indexOf("/creative/fonts") != -1) return true;
-        if (e.indexOf("/creative/css") != -1) return true;
-        if (e.indexOf("/creative/js") != -1) return true;
-        if (e.indexOf("/creative/img") != -1) return true;
+    fs.copy(configJosn.creative.path, configJosn.creative.path.replace("creative","creative-tmp"), function(fileName) {
+        fileName = fileName.replace(/\\/g,"/");
+        if (fileName.indexOf(".svn") != -1) return false;
+        if (fileName.indexOf(".DS_Store") != -1) return false;
+        if (fileName.indexOf(".git") != -1) return false;
+        if (fileName.indexOf("/creative") != -1 && fileName.indexOf("/creative/") == -1) return true;
+        if (fileName.indexOf("/creative/index.html") != -1) return true;
+        if (fileName.indexOf("/creative/app.js") != -1) return true;
+        if (fileName.indexOf("/creative/stylfileName.css") != -1) return true;
+        if (fileName.indexOf("/creative/swf") != -1) return true;
+        if (fileName.indexOf("/creative/video") != -1) return true;
+        if (fileName.indexOf("/creative/fonts") != -1) return true;
+        // if (fileName.indexOf("/creative/css") != -1) return true;
+        if (fileName.indexOf("/creative/js") != -1) return true;
+        if (fileName.indexOf("/creative/img") != -1) return true;
         return false;
     }, function(err) {
         if (err) {
